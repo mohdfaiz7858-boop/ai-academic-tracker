@@ -1,6 +1,11 @@
+import { Link, useLocation } from 'react-router-dom'
+
 function Sidebar() {
+  const location = useLocation()
+
   return (
     <aside className="sidebar">
+
       <div className="logo">
         <div className="logo-icon">A</div>
 
@@ -11,35 +16,55 @@ function Sidebar() {
       </div>
 
       <nav className="navigation">
-        <a href="/" className="nav-item active">
+
+        <Link
+          to="/"
+          className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
+        >
           <span>⌂</span>
           Dashboard
-        </a>
+        </Link>
 
-        <a href="/marks" className="nav-item">
+        <Link
+          to="/marks"
+          className={`nav-item ${location.pathname === '/marks' ? 'active' : ''}`}
+        >
           <span>📊</span>
           Marks
-        </a>
+        </Link>
 
-        <a href="/attendance" className="nav-item">
+        <Link
+          to="/attendance"
+          className={`nav-item ${location.pathname === '/attendance' ? 'active' : ''}`}
+        >
           <span>🕐</span>
           Attendance
-        </a>
+        </Link>
 
-        <a href="/study-hours" className="nav-item">
+        <Link
+          to="/study-hours"
+          className={`nav-item ${location.pathname === '/study-hours' ? 'active' : ''}`}
+        >
           <span>📚</span>
           Study Hours
-        </a>
+        </Link>
 
-        <a href="/assignments" className="nav-item">
+        <Link
+          to="/assignments"
+          className={`nav-item ${location.pathname === '/assignments' ? 'active' : ''}`}
+        >
           <span>📝</span>
           Assignments
-        </a>
+        </Link>
 
-        <a href="/goals" className="nav-item">
+        <Link
+          to="/goals"
+          className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`}
+        >
           <span>🎯</span>
           Goals
-        </a>
+        </Link>
+
       </nav>
 
       <div className="sidebar-bottom">
@@ -48,6 +73,7 @@ function Sidebar() {
           Settings
         </a>
       </div>
+
     </aside>
   )
 }
