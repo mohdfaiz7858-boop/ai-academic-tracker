@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import { useAcademic } from '../context/AcademicContext'
+import apiRequest from '../api/api'
 
 function Goals() {
   const {
@@ -19,17 +20,7 @@ function Goals() {
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const response = await fetch(
-          'http://localhost:5000/api/goals'
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to fetch goals'
-          )
-        }
-
-        const data = await response.json()
+        const data = await apiRequest('/goals')
 
         const formattedData = data.map((item) => ({
           id: item._id,
@@ -89,25 +80,14 @@ function Goals() {
     try {
       if (editingId !== null) {
         // Update goal
-        const response = await fetch(
-          `http://localhost:5000/api/goals/${editingId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(goalData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to update goal'
-          )
-        }
-
         const updatedGoal =
-          await response.json()
+          await apiRequest(
+            `/goals/${editingId}`,
+            {
+              method: 'PUT',
+              body: JSON.stringify(goalData),
+            }
+          )
 
         const formattedGoal = {
           id: updatedGoal._id,
@@ -131,25 +111,14 @@ function Goals() {
         setEditingId(null)
       } else {
         // Add new goal
-        const response = await fetch(
-          'http://localhost:5000/api/goals',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(goalData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to add goal'
-          )
-        }
-
         const newGoal =
-          await response.json()
+          await apiRequest(
+            '/goals',
+            {
+              method: 'POST',
+              body: JSON.stringify(goalData),
+            }
+          )
 
         const formattedGoal = {
           id: newGoal._id,
@@ -178,6 +147,7 @@ function Goals() {
       )
 
       alert(
+        error.message ||
         'Something went wrong. Please try again.'
       )
     }
@@ -200,18 +170,12 @@ function Goals() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/goals/${id}`,
+      await apiRequest(
+        `/goals/${id}`,
         {
           method: 'DELETE',
         }
       )
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to delete goal'
-        )
-      }
 
       setGoals(
         goals.filter(
@@ -231,7 +195,10 @@ function Goals() {
         error
       )
 
-      alert('Failed to delete goal.')
+      alert(
+        error.message ||
+        'Failed to delete goal.'
+      )
     }
   }
 

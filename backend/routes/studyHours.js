@@ -1,12 +1,15 @@
 const express = require('express')
 const StudyHours = require('../models/StudyHours')
+const protect = require('../middleware/auth')
 
 const router = express.Router()
 
-// Get all study hour records
-router.get('/', async (req, res) => {
+// Get logged-in user's study hours
+router.get('/', protect, async (req, res) => {
   try {
-    const studyHours = await StudyHours.find().sort({
+    const studyHours = await StudyHours.find({
+      userId: req.userId,
+    }).sort({
       createdAt: -1,
     })
 
@@ -18,16 +21,13 @@ router.get('/', async (req, res) => {
   }
 })
 
-// Add study hour record
-router.post('/', async (req, res) => {
+// Add study hours for logged-in user
+router.post('/', protect, async (req, res) => {
   try {
-    const {
-      date,
-      subject,
-      hours,
-    } = req.body
+    const { date, subject, hours } = req.body
 
     const studyHour = await StudyHours.create({
+      userId: req.userId,
       date,
       subject,
       hours,
@@ -41,18 +41,17 @@ router.post('/', async (req, res) => {
   }
 })
 
-// Update study hour record
-router.put('/:id', async (req, res) => {
+// Update logged-in user's study hours
+router.put('/:id', protect, async (req, res) => {
   try {
-    const {
-      date,
-      subject,
-      hours,
-    } = req.body
+    const { date, subject, hours } = req.body
 
     const studyHour =
-      await StudyHours.findByIdAndUpdate(
-        req.params.id,
+      await StudyHours.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          userId: req.userId,
+        },
         {
           date,
           subject,
@@ -78,13 +77,14 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// Delete study hour record
-router.delete('/:id', async (req, res) => {
+// Delete logged-in user's study hours
+router.delete('/:id', protect, async (req, res) => {
   try {
     const studyHour =
-      await StudyHours.findByIdAndDelete(
-        req.params.id
-      )
+      await StudyHours.findOneAndDelete({
+        _id: req.params.id,
+        userId: req.userId,
+      })
 
     if (!studyHour) {
       return res.status(404).json({
@@ -93,8 +93,7 @@ router.delete('/:id', async (req, res) => {
     }
 
     res.json({
-      message:
-        'Study hours deleted successfully',
+      message: 'Study hours deleted successfully',
     })
   } catch (error) {
     res.status(500).json({

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import { useAcademic } from '../context/AcademicContext'
+import apiRequest from '../api/api'
 
 function StudyHours() {
   const {
@@ -18,17 +19,7 @@ function StudyHours() {
   useEffect(() => {
     const fetchStudyHours = async () => {
       try {
-        const response = await fetch(
-          'http://localhost:5000/api/study-hours'
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to fetch study hours'
-          )
-        }
-
-        const data = await response.json()
+        const data = await apiRequest('/study-hours')
 
         const formattedData = data.map((item) => ({
           id: item._id,
@@ -75,25 +66,14 @@ function StudyHours() {
     try {
       if (editingId !== null) {
         // Update existing entry
-        const response = await fetch(
-          `http://localhost:5000/api/study-hours/${editingId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(entryData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to update study hours'
-          )
-        }
-
         const updatedEntry =
-          await response.json()
+          await apiRequest(
+            `/study-hours/${editingId}`,
+            {
+              method: 'PUT',
+              body: JSON.stringify(entryData),
+            }
+          )
 
         const formattedEntry = {
           id: updatedEntry._id,
@@ -113,25 +93,14 @@ function StudyHours() {
         setEditingId(null)
       } else {
         // Add new entry
-        const response = await fetch(
-          'http://localhost:5000/api/study-hours',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(entryData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to add study hours'
-          )
-        }
-
         const newEntry =
-          await response.json()
+          await apiRequest(
+            '/study-hours',
+            {
+              method: 'POST',
+              body: JSON.stringify(entryData),
+            }
+          )
 
         const formattedEntry = {
           id: newEntry._id,
@@ -156,6 +125,7 @@ function StudyHours() {
       )
 
       alert(
+        error.message ||
         'Something went wrong. Please try again.'
       )
     }
@@ -178,18 +148,12 @@ function StudyHours() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/study-hours/${id}`,
+      await apiRequest(
+        `/study-hours/${id}`,
         {
           method: 'DELETE',
         }
       )
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to delete study hours'
-        )
-      }
 
       setStudyEntries(
         studyEntries.filter(
@@ -209,7 +173,10 @@ function StudyHours() {
         error
       )
 
-      alert('Failed to delete study entry.')
+      alert(
+        error.message ||
+        'Failed to delete study entry.'
+      )
     }
   }
 
@@ -241,7 +208,6 @@ function StudyHours() {
           </p>
         </div>
 
-        {/* Stats */}
         <section className="stats-grid">
 
           <div className="stat-card">
@@ -278,7 +244,6 @@ function StudyHours() {
 
         </section>
 
-        {/* Add / Edit Study Entry */}
         <section className="card">
 
           <div className="card-header">
@@ -340,7 +305,6 @@ function StudyHours() {
 
         </section>
 
-        {/* Study History */}
         <section className="card marks-table-card">
 
           <div className="card-header">

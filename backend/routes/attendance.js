@@ -1,12 +1,15 @@
 const express = require('express')
 const Attendance = require('../models/Attendance')
+const protect = require('../middleware/auth')
 
 const router = express.Router()
 
-// Get all attendance records
-router.get('/', async (req, res) => {
+// Get logged-in user's attendance
+router.get('/', protect, async (req, res) => {
   try {
-    const attendance = await Attendance.find().sort({
+    const attendance = await Attendance.find({
+      userId: req.userId,
+    }).sort({
       createdAt: -1,
     })
 
@@ -18,8 +21,8 @@ router.get('/', async (req, res) => {
   }
 })
 
-// Add attendance record
-router.post('/', async (req, res) => {
+// Add attendance for logged-in user
+router.post('/', protect, async (req, res) => {
   try {
     const {
       subject,
@@ -35,6 +38,7 @@ router.post('/', async (req, res) => {
     }
 
     const attendance = await Attendance.create({
+      userId: req.userId,
       subject,
       attendedClasses,
       totalClasses,
@@ -48,8 +52,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-// Update attendance record
-router.put('/:id', async (req, res) => {
+// Update logged-in user's attendance
+router.put('/:id', protect, async (req, res) => {
   try {
     const {
       subject,
@@ -65,8 +69,11 @@ router.put('/:id', async (req, res) => {
     }
 
     const attendance =
-      await Attendance.findByIdAndUpdate(
-        req.params.id,
+      await Attendance.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          userId: req.userId,
+        },
         {
           subject,
           attendedClasses,
@@ -92,13 +99,14 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// Delete attendance record
-router.delete('/:id', async (req, res) => {
+// Delete logged-in user's attendance
+router.delete('/:id', protect, async (req, res) => {
   try {
     const attendance =
-      await Attendance.findByIdAndDelete(
-        req.params.id
-      )
+      await Attendance.findOneAndDelete({
+        _id: req.params.id,
+        userId: req.userId,
+      })
 
     if (!attendance) {
       return res.status(404).json({

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import { useAcademic } from '../context/AcademicContext'
+import apiRequest from '../api/api'
 
 function Assignments() {
   const {
@@ -20,17 +21,7 @@ function Assignments() {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const response = await fetch(
-          'http://localhost:5000/api/assignments'
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to fetch assignments'
-          )
-        }
-
-        const data = await response.json()
+        const data = await apiRequest('/assignments')
 
         const formattedData = data.map((item) => ({
           id: item._id,
@@ -70,27 +61,14 @@ function Assignments() {
     try {
       if (editingId !== null) {
         // Update assignment
-        const response = await fetch(
-          `http://localhost:5000/api/assignments/${editingId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-              assignmentData
-            ),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to update assignment'
-          )
-        }
-
         const updatedAssignment =
-          await response.json()
+          await apiRequest(
+            `/assignments/${editingId}`,
+            {
+              method: 'PUT',
+              body: JSON.stringify(assignmentData),
+            }
+          )
 
         const formattedAssignment = {
           id: updatedAssignment._id,
@@ -111,27 +89,14 @@ function Assignments() {
         setEditingId(null)
       } else {
         // Add assignment
-        const response = await fetch(
-          'http://localhost:5000/api/assignments',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-              assignmentData
-            ),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to add assignment'
-          )
-        }
-
         const newAssignment =
-          await response.json()
+          await apiRequest(
+            '/assignments',
+            {
+              method: 'POST',
+              body: JSON.stringify(assignmentData),
+            }
+          )
 
         const formattedAssignment = {
           id: newAssignment._id,
@@ -158,6 +123,7 @@ function Assignments() {
       )
 
       alert(
+        error.message ||
         'Something went wrong. Please try again.'
       )
     }
@@ -181,18 +147,12 @@ function Assignments() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/assignments/${id}`,
+      await apiRequest(
+        `/assignments/${id}`,
         {
           method: 'DELETE',
         }
       )
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to delete assignment'
-        )
-      }
 
       setAssignments(
         assignments.filter(
@@ -215,6 +175,7 @@ function Assignments() {
       )
 
       alert(
+        error.message ||
         'Failed to delete assignment.'
       )
     }
@@ -235,30 +196,19 @@ function Assignments() {
         : 'Pending'
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/assignments/${id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            title: assignment.title,
-            subject: assignment.subject,
-            dueDate: assignment.dueDate,
-            status: newStatus,
-          }),
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to update assignment status'
-        )
-      }
-
       const updatedAssignment =
-        await response.json()
+        await apiRequest(
+          `/assignments/${id}`,
+          {
+            method: 'PUT',
+            body: JSON.stringify({
+              title: assignment.title,
+              subject: assignment.subject,
+              dueDate: assignment.dueDate,
+              status: newStatus,
+            }),
+          }
+        )
 
       const formattedAssignment = {
         id: updatedAssignment._id,
@@ -282,6 +232,7 @@ function Assignments() {
       )
 
       alert(
+        error.message ||
         'Failed to update assignment status.'
       )
     }

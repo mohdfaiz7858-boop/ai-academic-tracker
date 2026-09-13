@@ -1,12 +1,15 @@
 const express = require('express')
 const Assignment = require('../models/Assignment')
+const protect = require('../middleware/auth')
 
 const router = express.Router()
 
-// Get all assignments
-router.get('/', async (req, res) => {
+// Get logged-in user's assignments
+router.get('/', protect, async (req, res) => {
   try {
-    const assignments = await Assignment.find().sort({
+    const assignments = await Assignment.find({
+      userId: req.userId,
+    }).sort({
       createdAt: -1,
     })
 
@@ -18,8 +21,8 @@ router.get('/', async (req, res) => {
   }
 })
 
-// Add a new assignment
-router.post('/', async (req, res) => {
+// Add assignment for logged-in user
+router.post('/', protect, async (req, res) => {
   try {
     const {
       title,
@@ -29,6 +32,7 @@ router.post('/', async (req, res) => {
     } = req.body
 
     const assignment = await Assignment.create({
+      userId: req.userId,
       title,
       subject,
       dueDate,
@@ -43,8 +47,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-// Update an assignment
-router.put('/:id', async (req, res) => {
+// Update logged-in user's assignment
+router.put('/:id', protect, async (req, res) => {
   try {
     const {
       title,
@@ -54,8 +58,11 @@ router.put('/:id', async (req, res) => {
     } = req.body
 
     const assignment =
-      await Assignment.findByIdAndUpdate(
-        req.params.id,
+      await Assignment.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          userId: req.userId,
+        },
         {
           title,
           subject,
@@ -82,13 +89,14 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// Delete an assignment
-router.delete('/:id', async (req, res) => {
+// Delete logged-in user's assignment
+router.delete('/:id', protect, async (req, res) => {
   try {
     const assignment =
-      await Assignment.findByIdAndDelete(
-        req.params.id
-      )
+      await Assignment.findOneAndDelete({
+        _id: req.params.id,
+        userId: req.userId,
+      })
 
     if (!assignment) {
       return res.status(404).json({
@@ -97,8 +105,7 @@ router.delete('/:id', async (req, res) => {
     }
 
     res.json({
-      message:
-        'Assignment deleted successfully',
+      message: 'Assignment deleted successfully',
     })
   } catch (error) {
     res.status(500).json({

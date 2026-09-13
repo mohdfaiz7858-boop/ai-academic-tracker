@@ -1,12 +1,15 @@
 const express = require('express')
 const Goal = require('../models/Goal')
+const protect = require('../middleware/auth')
 
 const router = express.Router()
 
-// Get all goals
-router.get('/', async (req, res) => {
+// Get logged-in user's goals
+router.get('/', protect, async (req, res) => {
   try {
-    const goals = await Goal.find().sort({
+    const goals = await Goal.find({
+      userId: req.userId,
+    }).sort({
       createdAt: -1,
     })
 
@@ -18,8 +21,8 @@ router.get('/', async (req, res) => {
   }
 })
 
-// Add a new goal
-router.post('/', async (req, res) => {
+// Add goal for logged-in user
+router.post('/', protect, async (req, res) => {
   try {
     const {
       title,
@@ -29,6 +32,7 @@ router.post('/', async (req, res) => {
     } = req.body
 
     const goal = await Goal.create({
+      userId: req.userId,
       title,
       type,
       target,
@@ -43,8 +47,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-// Update a goal
-router.put('/:id', async (req, res) => {
+// Update logged-in user's goal
+router.put('/:id', protect, async (req, res) => {
   try {
     const {
       title,
@@ -54,8 +58,11 @@ router.put('/:id', async (req, res) => {
     } = req.body
 
     const goal =
-      await Goal.findByIdAndUpdate(
-        req.params.id,
+      await Goal.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          userId: req.userId,
+        },
         {
           title,
           type,
@@ -82,13 +89,14 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-// Delete a goal
-router.delete('/:id', async (req, res) => {
+// Delete logged-in user's goal
+router.delete('/:id', protect, async (req, res) => {
   try {
     const goal =
-      await Goal.findByIdAndDelete(
-        req.params.id
-      )
+      await Goal.findOneAndDelete({
+        _id: req.params.id,
+        userId: req.userId,
+      })
 
     if (!goal) {
       return res.status(404).json({

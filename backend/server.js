@@ -8,6 +8,7 @@ const attendanceRoutes = require('./routes/attendance')
 const studyHoursRoutes = require('./routes/studyHours')
 const assignmentRoutes = require('./routes/assignments')
 const goalRoutes = require('./routes/goals')
+const authRoutes = require('./routes/auth')
 const app = express()
 
 // Middleware
@@ -20,6 +21,7 @@ app.use('/api/attendance', attendanceRoutes)
 app.use('/api/study-hours', studyHoursRoutes)
 app.use('/api/assignments', assignmentRoutes)
 app.use('/api/goals', goalRoutes)
+app.use('/api/auth', authRoutes)
 
 // Test route
 app.get('/', (req, res) => {

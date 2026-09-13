@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import { useAcademic } from '../context/AcademicContext'
+import apiRequest from '../api/api'
 
 function Attendance() {
   const {
@@ -19,15 +20,7 @@ function Attendance() {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await fetch(
-          'http://localhost:5000/api/attendance'
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch attendance')
-        }
-
-        const data = await response.json()
+        const data = await apiRequest('/attendance')
 
         // Backend uses "subject", frontend uses "name"
         const formattedData = data.map((item) => ({
@@ -84,25 +77,14 @@ function Attendance() {
     try {
       if (editingId !== null) {
         // Update attendance in MongoDB
-        const response = await fetch(
-          `http://localhost:5000/api/attendance/${editingId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(subjectData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to update attendance'
-          )
-        }
-
         const updatedAttendance =
-          await response.json()
+          await apiRequest(
+            `/attendance/${editingId}`,
+            {
+              method: 'PUT',
+              body: JSON.stringify(subjectData),
+            }
+          )
 
         const formattedAttendance = {
           id: updatedAttendance._id,
@@ -124,25 +106,14 @@ function Attendance() {
         setEditingId(null)
       } else {
         // Add attendance to MongoDB
-        const response = await fetch(
-          'http://localhost:5000/api/attendance',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(subjectData),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(
-            'Failed to add attendance'
-          )
-        }
-
         const newAttendance =
-          await response.json()
+          await apiRequest(
+            '/attendance',
+            {
+              method: 'POST',
+              body: JSON.stringify(subjectData),
+            }
+          )
 
         const formattedAttendance = {
           id: newAttendance._id,
@@ -169,6 +140,7 @@ function Attendance() {
       )
 
       alert(
+        error.message ||
         'Something went wrong. Please try again.'
       )
     }
@@ -195,18 +167,12 @@ function Attendance() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/attendance/${id}`,
+      await apiRequest(
+        `/attendance/${id}`,
         {
           method: 'DELETE',
         }
       )
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to delete attendance'
-        )
-      }
 
       setAttendanceSubjects(
         attendanceSubjects.filter(
@@ -226,7 +192,10 @@ function Attendance() {
         error
       )
 
-      alert('Failed to delete attendance.')
+      alert(
+        error.message ||
+        'Failed to delete attendance.'
+      )
     }
   }
 
@@ -260,7 +229,6 @@ function Attendance() {
       <main className="main-content">
         <Topbar />
 
-        {/* Page Heading */}
         <div className="page-heading">
           <h1>Attendance Tracker 🕐</h1>
 
@@ -270,9 +238,7 @@ function Attendance() {
           </p>
         </div>
 
-        {/* Stats */}
         <section className="stats-grid">
-
           <div className="stat-card">
             <div className="stat-icon attendance-icon">
               🕐
@@ -314,12 +280,9 @@ function Attendance() {
               </span>
             </div>
           </div>
-
         </section>
 
-        {/* Add / Edit Attendance */}
         <section className="card">
-
           <div className="card-header">
             <div>
               <h2>
@@ -340,7 +303,6 @@ function Attendance() {
             onSubmit={addOrUpdateSubject}
             className="marks-form"
           >
-
             <input
               type="text"
               placeholder="Subject name"
@@ -381,14 +343,10 @@ function Attendance() {
                 ? 'Update Attendance'
                 : 'Add Subject'}
             </button>
-
           </form>
-
         </section>
 
-        {/* Attendance Table */}
         <section className="card marks-table-card">
-
           <div className="card-header">
             <div>
               <h2>Subject-wise Attendance</h2>
@@ -403,9 +361,7 @@ function Attendance() {
 
           {attendanceSubjects.length > 0 && (
             <div className="marks-table-wrapper">
-
               <table className="marks-table">
-
                 <thead>
                   <tr>
                     <th>Subject</th>
@@ -418,10 +374,8 @@ function Attendance() {
                 </thead>
 
                 <tbody>
-
                   {attendanceSubjects.map(
                     (subject) => {
-
                       const percentage = (
                         (subject.attendedClasses /
                           subject.totalClasses) *
@@ -433,7 +387,6 @@ function Attendance() {
 
                       return (
                         <tr key={subject.id}>
-
                           <td>
                             {subject.name}
                           </td>
@@ -465,7 +418,6 @@ function Attendance() {
                           </td>
 
                           <td>
-
                             <button
                               type="button"
                               onClick={() =>
@@ -487,23 +439,16 @@ function Attendance() {
                             >
                               🗑️
                             </button>
-
                           </td>
-
                         </tr>
                       )
                     }
                   )}
-
                 </tbody>
-
               </table>
-
             </div>
           )}
-
         </section>
-
       </main>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAcademic } from '../context/AcademicContext'
+import apiRequest from '../api/api'
 
 function Marks() {
   const {
@@ -17,15 +18,7 @@ function Marks() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch(
-          'http://localhost:5000/api/subjects'
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch subjects')
-        }
-
-        const data = await response.json()
+        const data = await apiRequest('/subjects')
 
         setSubjects(data)
       } catch (error) {
@@ -76,23 +69,13 @@ function Marks() {
     try {
       if (editingId) {
         // Update subject
-        const response = await fetch(
-          `http://localhost:5000/api/subjects/${editingId}`,
+        const updatedSubject = await apiRequest(
+          `/subjects/${editingId}`,
           {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify(subjectData),
           }
         )
-
-        if (!response.ok) {
-          throw new Error('Failed to update subject')
-        }
-
-        const updatedSubject =
-          await response.json()
 
         setSubjects(
           subjects.map((subject) =>
@@ -105,23 +88,13 @@ function Marks() {
         setEditingId(null)
       } else {
         // Add subject
-        const response = await fetch(
-          'http://localhost:5000/api/subjects',
+        const newSubject = await apiRequest(
+          '/subjects',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
             body: JSON.stringify(subjectData),
           }
         )
-
-        if (!response.ok) {
-          throw new Error('Failed to add subject')
-        }
-
-        const newSubject =
-          await response.json()
 
         setSubjects([
           newSubject,
@@ -138,7 +111,10 @@ function Marks() {
         error
       )
 
-      alert('Something went wrong. Please try again.')
+      alert(
+        error.message ||
+        'Something went wrong. Please try again.'
+      )
     }
   }
 
@@ -163,16 +139,12 @@ function Marks() {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/subjects/${id}`,
+      await apiRequest(
+        `/subjects/${id}`,
         {
           method: 'DELETE',
         }
       )
-
-      if (!response.ok) {
-        throw new Error('Failed to delete subject')
-      }
 
       setSubjects(
         subjects.filter(
@@ -185,7 +157,10 @@ function Marks() {
         error
       )
 
-      alert('Failed to delete subject.')
+      alert(
+        error.message ||
+        'Failed to delete subject.'
+      )
     }
   }
 
