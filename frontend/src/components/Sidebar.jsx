@@ -19,7 +19,11 @@ function Sidebar() {
 
         <Link
           to="/"
-          className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>⌂</span>
           Dashboard
@@ -27,7 +31,11 @@ function Sidebar() {
 
         <Link
           to="/marks"
-          className={`nav-item ${location.pathname === '/marks' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/marks'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>📊</span>
           Marks
@@ -35,7 +43,11 @@ function Sidebar() {
 
         <Link
           to="/attendance"
-          className={`nav-item ${location.pathname === '/attendance' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/attendance'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>🕐</span>
           Attendance
@@ -43,7 +55,11 @@ function Sidebar() {
 
         <Link
           to="/study-hours"
-          className={`nav-item ${location.pathname === '/study-hours' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/study-hours'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>📚</span>
           Study Hours
@@ -51,7 +67,11 @@ function Sidebar() {
 
         <Link
           to="/assignments"
-          className={`nav-item ${location.pathname === '/assignments' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/assignments'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>📝</span>
           Assignments
@@ -59,7 +79,11 @@ function Sidebar() {
 
         <Link
           to="/goals"
-          className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`}
+          className={`nav-item ${
+            location.pathname === '/goals'
+              ? 'active'
+              : ''
+          }`}
         >
           <span>🎯</span>
           Goals
@@ -68,10 +92,17 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-bottom">
-        <a href="#" className="nav-item">
-          <span>⚙️</span>
-          Settings
-        </a>
+        <Link
+          to="/contact"
+          className={`nav-item ${
+            location.pathname === '/contact'
+              ? 'active'
+              : ''
+          }`}
+        >
+          <span>📩</span>
+          Contact Us
+        </Link>
       </div>
 
     </aside>

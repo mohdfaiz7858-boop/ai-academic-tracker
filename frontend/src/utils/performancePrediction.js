@@ -4,14 +4,11 @@ function predictPerformance({
   studyHours,
   assignmentCompletion,
 }) {
-  // Normalize study hours.
-  // 5 hours/day or more is considered excellent.
   const studyScore = Math.min(
     (studyHours / 5) * 100,
     100
   )
 
-  // Weighted academic performance score
   const predictedScore =
     marks * 0.45 +
     attendance * 0.25 +
@@ -35,9 +32,51 @@ function predictPerformance({
     status = 'Needs Improvement'
   }
 
+  const getFactorStatus = (value) => {
+    if (value >= 85) {
+      return 'Strong'
+    }
+
+    if (value >= 75) {
+      return 'Good'
+    }
+
+    if (value >= 60) {
+      return 'Average'
+    }
+
+    return 'Needs Improvement'
+  }
+
   return {
     prediction: Number(prediction.toFixed(1)),
     status,
+
+    factors: {
+      marks: {
+        value: Number(marks.toFixed(1)),
+        status: getFactorStatus(marks),
+      },
+
+      attendance: {
+        value: Number(attendance.toFixed(1)),
+        status: getFactorStatus(attendance),
+      },
+
+      studyHours: {
+        value: Number(studyScore.toFixed(1)),
+        status: getFactorStatus(studyScore),
+      },
+
+      assignments: {
+        value: Number(
+          assignmentCompletion.toFixed(1)
+        ),
+        status: getFactorStatus(
+          assignmentCompletion
+        ),
+      },
+    },
   }
 }
 

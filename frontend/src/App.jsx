@@ -8,6 +8,7 @@ import Assignments from './pages/Assignments'
 import Goals from './pages/Goals'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Contact from './pages/Contact'
 
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -82,7 +83,14 @@ function App() {
           </ProtectedRoute>
         }
       />
-
+<Route
+  path="/contact"
+  element={
+    <ProtectedRoute>
+      <Contact />
+    </ProtectedRoute>
+  }
+/>
     </Routes>
   )
 }
