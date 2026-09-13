@@ -1,23 +1,62 @@
+import { useAcademic } from '../context/AcademicContext'
+
 function GoalCard() {
+  const { goals } = useAcademic()
+
+  // Get the most recently added goal
+  const currentGoal =
+    goals.length > 0
+      ? goals[goals.length - 1]
+      : null
+
   return (
     <div className="card goal-card">
+
       <div className="card-header">
         <div>
           <h2>Current Goal 🎯</h2>
-          <p>Target CGPA</p>
+
+          <p>
+            {currentGoal
+              ? currentGoal.title
+              : 'Target CGPA'}
+          </p>
         </div>
       </div>
 
-      <div className="goal-score">
-        <strong>8.5</strong>
-        <span>/ 10 CGPA</span>
-      </div>
+      {currentGoal ? (
+        <>
+          <div className="goal-score">
+            <strong>{currentGoal.target}</strong>
 
-      <div className="progress-bar">
-        <div className="progress"></div>
-      </div>
+            <span>
+              / {currentGoal.type === 'CGPA'
+                ? '10 CGPA'
+                : 'Target'}
+            </span>
+          </div>
 
-      <p className="goal-text">72% progress towards your goal</p>
+          <div className="progress-bar">
+            <div
+              className="progress"
+              style={{
+                width: `${currentGoal.progress}%`,
+              }}
+            ></div>
+          </div>
+
+          <p className="goal-text">
+            {currentGoal.progress}% progress towards your goal
+          </p>
+        </>
+      ) : (
+        <div className="goal-score">
+          <strong>—</strong>
+
+          <span>No goal added</span>
+        </div>
+      )}
+
     </div>
   )
 }

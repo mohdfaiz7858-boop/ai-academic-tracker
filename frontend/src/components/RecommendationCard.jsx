@@ -1,18 +1,102 @@
+import { useAcademic } from '../context/AcademicContext'
+import generateRecommendations from '../utils/recommendations'
+
 function RecommendationCard() {
+  const {
+    subjects,
+    attendanceSubjects,
+    studyEntries,
+    assignments,
+  } = useAcademic()
+
+  // Calculate overall marks
+  const totalMaxMarks = subjects.reduce(
+    (total, subject) => total + subject.maxMarks,
+    0
+  )
+
+  const totalObtainedMarks = subjects.reduce(
+    (total, subject) =>
+      total + subject.obtainedMarks,
+    0
+  )
+
+  const marks =
+    totalMaxMarks > 0
+      ? (totalObtainedMarks / totalMaxMarks) * 100
+      : 0
+
+  // Calculate attendance
+  const totalClasses = attendanceSubjects.reduce(
+    (total, subject) =>
+      total + subject.totalClasses,
+    0
+  )
+
+  const totalAttendedClasses =
+    attendanceSubjects.reduce(
+      (total, subject) =>
+        total + subject.attendedClasses,
+      0
+    )
+
+  const attendance =
+    totalClasses > 0
+      ? (totalAttendedClasses / totalClasses) * 100
+      : 0
+
+  // Calculate average study hours
+  const totalStudyHours = studyEntries.reduce(
+    (total, entry) => total + entry.hours,
+    0
+  )
+
+  const studyHours =
+    studyEntries.length > 0
+      ? totalStudyHours / studyEntries.length
+      : 0
+
+  // Calculate assignment completion
+  const completedAssignments =
+    assignments.filter(
+      (assignment) =>
+        assignment.status === 'Completed'
+    ).length
+
+  const assignmentCompletion =
+    assignments.length > 0
+      ? (completedAssignments / assignments.length) * 100
+      : 0
+
+  // Generate AI recommendations
+  const recommendations = generateRecommendations({
+    marks,
+    attendance,
+    studyHours,
+    assignmentCompletion,
+  })
+
+  const recommendation = recommendations[0]
+
   return (
     <section className="card recommendation">
-      <div className="recommendation-icon">💡</div>
+
+      <div className="recommendation-icon">
+        💡
+      </div>
 
       <div>
         <span>AI RECOMMENDATION</span>
-        <h2>Focus on your study consistency</h2>
-        <p>
-          Your performance is improving, but your study hours fluctuate.
-          Try maintaining at least 3 hours of focused study every day.
-        </p>
+
+        <h2>{recommendation.title}</h2>
+
+        <p>{recommendation.message}</p>
       </div>
 
-      <button>View Recommendations →</button>
+      <button>
+        View Recommendations →
+      </button>
+
     </section>
   )
 }

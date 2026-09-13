@@ -1,7 +1,7 @@
 import { useAcademic } from '../context/AcademicContext'
-import predictPerformance from '../utils/performancePrediction'
+import generateNotifications from '../utils/notifications'
 
-function PredictionCard() {
+function NotificationCard() {
   const {
     subjects,
     attendanceSubjects,
@@ -9,7 +9,7 @@ function PredictionCard() {
     assignments,
   } = useAcademic()
 
-  // Calculate overall marks
+  // Overall marks
   const totalMaxMarks = subjects.reduce(
     (total, subject) => total + subject.maxMarks,
     0
@@ -26,7 +26,7 @@ function PredictionCard() {
       ? (totalObtainedMarks / totalMaxMarks) * 100
       : 0
 
-  // Calculate attendance
+  // Attendance
   const totalClasses = attendanceSubjects.reduce(
     (total, subject) =>
       total + subject.totalClasses,
@@ -45,7 +45,7 @@ function PredictionCard() {
       ? (totalAttendedClasses / totalClasses) * 100
       : 0
 
-  // Calculate average study hours
+  // Average study hours
   const totalStudyHours = studyEntries.reduce(
     (total, entry) => total + entry.hours,
     0
@@ -56,61 +56,73 @@ function PredictionCard() {
       ? totalStudyHours / studyEntries.length
       : 0
 
-  // Calculate assignment completion
+  // Assignments
   const completedAssignments =
     assignments.filter(
       (assignment) =>
         assignment.status === 'Completed'
     ).length
 
+  const pendingAssignments =
+    assignments.length - completedAssignments
+
   const assignmentCompletion =
     assignments.length > 0
       ? (completedAssignments / assignments.length) * 100
       : 0
 
-  // AI prediction
-  const result = predictPerformance({
+  // Generate notifications
+  const notifications = generateNotifications({
     marks,
     attendance,
     studyHours,
     assignmentCompletion,
+    pendingAssignments,
   })
 
   return (
-    <div className="card prediction-card">
+    <div className="card notification-card">
 
       <div className="card-header">
         <div>
-          <h2>AI Performance Prediction</h2>
+          <h2>Smart Notifications 🔔</h2>
 
           <p>
-            Based on your current academic data
+            Important updates based on your academic activity
           </p>
         </div>
 
         <span className="ai-badge">AI</span>
       </div>
 
-      <div className="prediction-score">
-        <div className="score-circle">
-          <strong>{result.prediction}%</strong>
+      <div className="notification-list">
 
-          <span>Predicted</span>
-        </div>
-      </div>
+        {notifications.slice(0, 3).map(
+          (notification, index) => (
+            <div
+              className={`notification-item notification-${notification.type}`}
+              key={index}
+            >
+              <div className="notification-icon">
+                {notification.type === 'warning'
+                  ? '⚠️'
+                  : notification.type === 'success'
+                  ? '✅'
+                  : '💡'}
+              </div>
 
-      <div className="prediction-status">
+              <div>
+                <strong>
+                  {notification.title}
+                </strong>
 
-        <span className="status-dot"></span>
-
-        <div>
-          <strong>{result.status}</strong>
-
-          <p>
-            Prediction is based on your marks,
-            attendance, study hours and assignments.
-          </p>
-        </div>
+                <p>
+                  {notification.message}
+                </p>
+              </div>
+            </div>
+          )
+        )}
 
       </div>
 
@@ -118,4 +130,4 @@ function PredictionCard() {
   )
 }
 
-export default PredictionCard
+export default NotificationCard
