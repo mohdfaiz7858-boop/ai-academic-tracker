@@ -76,26 +76,71 @@ function RecommendationCard() {
     assignmentCompletion,
   })
 
-  const recommendation = recommendations[0]
-
   return (
-    <section className="card recommendation">
+    <section className="card recommendation-card">
 
-      <div className="recommendation-icon">
-        💡
+      <div className="recommendation-header">
+
+        <div>
+          <span className="recommendation-label">
+            🤖 AI RECOMMENDATIONS
+          </span>
+
+          <h2>
+            Personalized guidance for you
+          </h2>
+
+          <p>
+            Based on your current academic performance
+          </p>
+        </div>
+
+        <div className="recommendation-main-icon">
+          💡
+        </div>
+
       </div>
 
-      <div>
-        <span>AI RECOMMENDATION</span>
+      <div className="recommendation-list">
 
-        <h2>{recommendation.title}</h2>
+        {recommendations.length > 0 ? (
+          recommendations.map(
+            (recommendation, index) => (
+              <div
+                className="recommendation-item"
+                key={index}
+              >
 
-        <p>{recommendation.message}</p>
+                <div className="recommendation-number">
+                  {index + 1}
+                </div>
+
+                <div className="recommendation-content">
+
+                  <h3>
+                    {recommendation.title}
+                  </h3>
+
+                  <p>
+                    {recommendation.message}
+                  </p>
+
+                </div>
+
+              </div>
+            )
+          )
+        ) : (
+          <div className="recommendation-empty">
+            <span>✨</span>
+
+            <p>
+              Keep up the good work!
+            </p>
+          </div>
+        )}
+
       </div>
-
-      <button>
-        View Recommendations →
-      </button>
 
     </section>
   )

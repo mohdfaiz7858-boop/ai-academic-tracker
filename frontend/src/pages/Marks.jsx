@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAcademic } from '../context/AcademicContext'
 import apiRequest from '../api/api'
+import Sidebar from '../components/Sidebar'
 
 function Marks() {
   const {
@@ -113,7 +114,7 @@ function Marks() {
 
       alert(
         error.message ||
-        'Something went wrong. Please try again.'
+          'Something went wrong. Please try again.'
       )
     }
   }
@@ -159,7 +160,7 @@ function Marks() {
 
       alert(
         error.message ||
-        'Failed to delete subject.'
+          'Failed to delete subject.'
       )
     }
   }
@@ -174,6 +175,8 @@ function Marks() {
 
   return (
     <div className="app">
+
+      <Sidebar />
 
       <main className="main-content">
 
