@@ -40,7 +40,7 @@ function Contact() {
                 <div>
                   <small>Email</small>
                   <strong>
-                    support@academictracker.com
+                    mohdfaiz.7858@gmail.com
                   </strong>
                 </div>
               </div>
