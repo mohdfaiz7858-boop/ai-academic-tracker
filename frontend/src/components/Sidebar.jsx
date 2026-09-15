@@ -37,7 +37,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>📊</span>
+          <span></span>
           Marks
         </Link>
 
@@ -49,7 +49,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>🕐</span>
+          <span></span>
           Attendance
         </Link>
 
@@ -61,7 +61,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>📚</span>
+          <span></span>
           Study Hours
         </Link>
 
@@ -73,7 +73,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>📝</span>
+          <span></span>
           Assignments
         </Link>
 
@@ -85,7 +85,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>🎯</span>
+          <span></span>
           Goals
         </Link>
 
@@ -100,7 +100,7 @@ function Sidebar() {
               : ''
           }`}
         >
-          <span>📩</span>
+          <span></span>
           Contact Us
         </Link>
       </div>

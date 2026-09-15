@@ -10,7 +10,7 @@ function Contact() {
         <Topbar />
 
         <div className="page-heading">
-          <h1>Contact Us 📩</h1>
+          <h1>Contact Us </h1>
 
           <p>
             Have questions or feedback? We'd love to

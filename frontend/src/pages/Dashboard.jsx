@@ -110,7 +110,7 @@ function Dashboard() {
         <section className="stats-grid">
 
           <StatCard
-            icon="📊"
+            icon=""
             title="Overall Marks"
             value={`${overallMarks}%`}
             message={
@@ -122,7 +122,7 @@ function Dashboard() {
           />
 
           <StatCard
-            icon="🕐"
+            icon=""
             title="Attendance"
             value={`${overallAttendance}%`}
             message={
@@ -136,7 +136,7 @@ function Dashboard() {
           />
 
           <StatCard
-            icon="📚"
+            icon=""
             title="Study Hours"
             value={`${averageStudyHours} hrs`}
             message={
@@ -148,7 +148,7 @@ function Dashboard() {
           />
 
           <StatCard
-            icon="📝"
+            icon=""
             title="Assignments"
             value={assignmentCount}
             message={
